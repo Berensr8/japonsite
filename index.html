@@ -8,14 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-9L05BRDJY9"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);} // GA helper
-    gtag('js', new Date());
-    gtag('config', 'G-9L05BRDJY9');
-  </script>
+  <!-- Analytics çerez izni verilince yüklenecek (bkz. privacy.js) -->
 </head>
 <body>
   <header class="site-header glass">
@@ -26,6 +19,7 @@
       <a href="#tablo">Tüm Tablo</a>
     </nav>
   </header>
+  <div class="decor-strip" aria-hidden="true"></div>
   <main>
     <section class="hero" id="ana">
       <h1>Hiragana'yı Etkileşimli Öğren</h1>
@@ -38,7 +32,7 @@
     </section>
 
     <section id="quiz" class="panel hidden">
-      <h2>Hiragana Quiz</h2>
+  <h2 class="jp-head jp-quiz">Hiragana Quiz</h2>
       <div class="mode-tabs">
         <button class="tab active" data-mode="standard">Karışık</button>
         <button class="tab" data-mode="learning">Sıralı Öğrenme</button>
@@ -66,7 +60,7 @@
     </section>
 
     <section id="oyunlar" class="panel">
-      <h2>Mini Oyunlar</h2>
+  <h2 class="jp-head jp-games">Mini Oyunlar</h2>
   <!-- Oyun grup seçici global panele taşındı -->
       <div class="games-grid">
         <div class="game-tile" data-game="memory">
@@ -111,12 +105,12 @@
     </section>
 
     <section id="tablo" class="panel">
-      <h2>Hiragana Tablosu</h2>
+  <h2 class="jp-head jp-table">Hiragana Tablosu</h2>
       <div id="hiraganaTable" class="hiragana-table"></div>
     </section>
   </main>
   <footer>
-    <p>HiraganaLab © 2025</p>
+    <p>HiraganaLab © 2025 · <a href="#" class="foot-link" rel="noopener">Gizlilik</a> · <a href="#" id="manageConsent" class="foot-link">Çerez Tercihi</a></p>
   </footer>
   <aside id="groupPanel" class="group-panel glass">
     <h4>Harf Grupları</h4>
@@ -129,6 +123,25 @@
   <script type="module" src="scripts/games.js"></script>
   <script type="module" src="scripts/theme.js"></script>
   <script type="module" src="scripts/mobile.js"></script>
+  <!-- Yeni Minimal Çerez Onayı -->
+  <div id="consentBar" class="consent-bar" role="dialog" aria-live="polite" aria-label="Çerez Kullanımı" hidden>
+    <div class="consent-main">
+      <span class="consent-text">Deneyimi ölçmek için anonim Analytics (GA4) kullanıyoruz. Kabul eder misiniz?</span>
+      <div class="consent-actions">
+        <button id="consentAccept" class="primary" data-act="accept">Kabul</button>
+        <button id="consentReject" class="ghost" data-act="reject">Reddet</button>
+        <button id="consentDetailsToggle" class="secondary" aria-expanded="false" aria-controls="consentDetails">Detaylar</button>
+      </div>
+    </div>
+    <div id="consentDetails" class="consent-details" hidden>
+      <p>Yalnızca anonim istatistik: sayfa görüntüleme, olay (oyun açma vb), tarayıcı türü, yaklaşık cihaz boyutu. IP adresi Google tarafından anonimleştirilir. Kişisel veri veya reklam çerezi yoktur.</p>
+      <div class="consent-small-actions">
+        <button id="consentReset" class="ghost small">Tercihi Sıfırla</button>
+        <button id="consentCloseDetails" class="ghost small">Kapat</button>
+      </div>
+    </div>
+  </div>
+  <script type="module" src="scripts/privacy.js"></script>
   <!-- stats.js kaldırıldı -->
 </body>
 </html>
