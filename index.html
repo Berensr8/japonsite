@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Hiragana Öğren - Japonca Başlangıç</title>
+  <link rel="stylesheet" href="styles/main.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <header class="site-header glass">
+    <div class="logo">Hiragana<span>Lab</span></div>
+    <nav>
+      <a href="#quiz">Quiz</a>
+      <a href="#oyunlar">Oyunlar</a>
+      <a href="#tablo">Tüm Tablo</a>
+    </nav>
+  </header>
+  <main>
+    <section class="hero" id="ana">
+      <h1>Hiragana'yı Etkileşimli Öğren</h1>
+      <p>Spaced repetition ve mini oyunlarla temel 46 Hiragana karakterini kalıcı öğren.</p>
+      <div class="actions">
+        <button id="startQuiz" class="primary">Quiz'e Başla</button>
+        <button id="showChart" class="secondary">Tüm Tablo</button>
+  <button id="learningModeBtn" class="ghost">Sıralı Öğren</button>
+      </div>
+    </section>
+
+    <section id="quiz" class="panel hidden">
+      <h2>Hiragana Quiz</h2>
+      <div class="mode-tabs">
+        <button class="tab active" data-mode="standard">Karışık</button>
+        <button class="tab" data-mode="learning">Sıralı Öğrenme</button>
+        <button class="tab" data-mode="mastered">Tamamlananlar</button>
+        <button class="tab" data-mode="test">Test (4 Şık)</button>
+      </div>
+  <!-- Grup seçici global panele taşındı -->
+      <div class="quiz-card glass" id="quizCard">
+        <div class="char" id="currentChar">あ</div>
+        <div id="testStatus" class="test-status hidden"></div>
+        <input id="answerInput" placeholder="Okunuş (romaji)" autocomplete="off" />
+        <div class="feedback" id="feedback"></div>
+        <div class="controls">
+          <button id="skipBtn" class="ghost">Atla</button>
+          <button id="revealBtn" class="ghost">Göster</button>
+          <button id="submitBtn" class="primary">Gönder</button>
+        </div>
+        <div id="choiceArea" class="choice-area hidden"></div>
+      </div>
+      <div class="progress-wrap">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
+      <div class="session-stats" id="sessionStats"></div>
+  <div class="learning-stats" id="learningStats"></div>
+    </section>
+
+    <section id="oyunlar" class="panel">
+      <h2>Mini Oyunlar</h2>
+  <!-- Oyun grup seçici global panele taşındı -->
+      <div class="games-grid">
+        <div class="game-tile" data-game="memory">
+          <div class="game-icon" aria-hidden="true">🧠</div>
+          <div class="game-body">
+            <h3>Hafıza Eşleştirme</h3>
+            <p>Karakteri doğru romaji ile eşleştir, süre dolmadan tüm çiftleri aç.</p>
+          </div>
+          <div class="game-meta"><span class="last-score">Son skor yok</span></div>
+          <button class="full">Başlat</button>
+        </div>
+        <div class="game-tile" data-game="typing">
+          <div class="game-icon" aria-hidden="true">⌨️</div>
+          <div class="game-body">
+            <h3>Hızlı Yaz</h3>
+            <p>Beliren karakterleri mümkün olduğunca hızlı ve doğru yaz.</p>
+          </div>
+          <div class="game-meta"><span class="last-score">Son skor yok</span></div>
+          <button class="full">Başlat</button>
+        </div>
+        <div class="game-tile" data-game="flash">
+          <div class="game-icon" aria-hidden="true">🃏</div>
+          <div class="game-body">
+            <h3>Flash Kart</h3>
+            <p>Çevir, tahmin et ve ezberini pekiştir.</p>
+          </div>
+          <div class="game-meta"><span class="last-score">Son skor yok</span></div>
+          <button class="full">Başlat</button>
+        </div>
+  <div class="game-tile featured" data-game="draw">
+          <div class="game-icon" aria-hidden="true">✏️</div>
+          <div class="game-body">
+            <h3>Çizim</h3>
+            <p>Romajisi verilen karakteri çiz ve otomatik skorla değerlendir.</p>
+          </div>
+            <div class="game-meta"><span class="last-score">Son skor yok</span></div>
+          <button class="full">Başlat</button>
+        </div>
+      </div>
+      <div id="gameArea" class="game-area hidden"></div>
+  <div id="scoreHistory" class="score-history"></div>
+    </section>
+
+    <section id="tablo" class="panel">
+      <h2>Hiragana Tablosu</h2>
+      <div id="hiraganaTable" class="hiragana-table"></div>
+    </section>
+  </main>
+  <footer>
+    <p>HiraganaLab © 2025</p>
+  </footer>
+  <aside id="groupPanel" class="group-panel glass">
+    <h4>Harf Grupları</h4>
+    <div id="groupCheckboxesGlobal" class="groups compact"></div>
+    <div class="panel-hint">Seçtiklerin tüm quiz ve oyunlara uygulanır.</div>
+  </aside>
+  <script type="module" src="scripts/quiz.js"></script>
+  <script type="module" src="scripts/games.js"></script>
+  <script type="module" src="scripts/theme.js"></script>
+  <!-- stats.js kaldırıldı -->
+</body>
+</html>
