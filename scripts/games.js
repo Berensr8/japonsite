@@ -294,6 +294,8 @@ function startDraw(){
     </div></div><canvas id="drawCanvas" width="320" height="320"></canvas></div>`;
   const canvas = document.getElementById('drawCanvas');
   const ctx = canvas.getContext('2d');
+  // Bazı mobil tarayıcılarda CSS uygulanmazsa garanti altına al
+  canvas.style.touchAction = 'none';
   const targetEl = document.getElementById('drawTarget');
   const doneBtn = document.getElementById('drawDone');
   const clearBtn = document.getElementById('drawClear');
@@ -307,7 +309,7 @@ function startDraw(){
   const totalModeChk = document.getElementById('drawTotalMode');
   const totalSecondsInput = document.getElementById('drawTotalSeconds');
   const guideChk = document.getElementById('drawGuide');
-  let drawing=false, last=[0,0], time=0, interval=null, currentChar=null, running=false, correctCount=0, asked=0;
+  let drawing=false, last=[0,0], time=0, interval=null, currentChar='', running=false, correctCount=0, asked=0;
   let strokes=[]; // kullanıcı strokes
   let totalTimer=0, totalInterval=null, totalDuration=0;
   const glyphCache = new Map(); // referans şekil önbellek
@@ -348,9 +350,36 @@ function startDraw(){
   function finishRound(){
     running=false; clearInterval(interval); interval=null; statusEl.textContent+= ' | Tur bitti';
   }
-  canvas.addEventListener('mousedown', e=>{ if(!running) return; drawing=true; const r=canvas.getBoundingClientRect(); last=[e.clientX-r.left,e.clientY-r.top]; strokes.push([[last[0],last[1]]]); });
-  canvas.addEventListener('mousemove', e=>{ if(!drawing) return; const r=canvas.getBoundingClientRect(); const x=e.clientX-r.left,y=e.clientY-r.top; ctx.beginPath(); ctx.moveTo(last[0],last[1]); ctx.lineTo(x,y); ctx.stroke(); last=[x,y]; strokes[strokes.length-1].push([x,y]); if(running && strokes.length && strokes[strokes.length-1].length%6===0){ const sc=similarityScore(); statusEl.textContent=`${time}s${totalModeChk.checked?` | Toplam ${totalTimer}s`:''} | Skor ~${sc} | Doğru: ${correctCount}/${asked-1}`; } });
-  window.addEventListener('mouseup', ()=>{ drawing=false; });
+  // --- Pointer (mouse + touch + pen) destekli çizim ---
+  function pointerPos(evt){
+    const e = evt.touches? evt.touches[0] : evt;
+    const r = canvas.getBoundingClientRect();
+    // Eğer canvas CSS ile ölçeklendiyse doğru koordinat için ölçek uygula
+    const scaleX = canvas.width / r.width;
+    const scaleY = canvas.height / r.height;
+    return [ (e.clientX - r.left) * scaleX, (e.clientY - r.top) * scaleY ];
+  }
+  function startStroke(e){
+    if(!running) return; e.preventDefault();
+    drawing=true; const p=pointerPos(e); last=p; strokes.push([[last[0],last[1]]]);
+  }
+  function moveStroke(e){
+    if(!drawing) return; e.preventDefault();
+    const p=pointerPos(e); const x=p[0], y=p[1];
+    ctx.beginPath(); ctx.moveTo(last[0],last[1]); ctx.lineTo(x,y); ctx.stroke(); last=[x,y]; strokes[strokes.length-1].push([x,y]);
+    if(running && strokes.length && strokes[strokes.length-1].length%6===0){
+      const sc=similarityScore();
+      statusEl.textContent=`${time}s${totalModeChk.checked?` | Toplam ${totalTimer}s`:''} | Skor ~${sc} | Doğru: ${correctCount}/${asked-1}`;
+    }
+  }
+  function endStroke(){ drawing=false; }
+  canvas.addEventListener('pointerdown', startStroke, {passive:false});
+  canvas.addEventListener('pointermove', moveStroke, {passive:false});
+  window.addEventListener('pointerup', endStroke);
+  // Eski dokunmatik tarayıcılar için touch fallback
+  canvas.addEventListener('touchstart', startStroke, {passive:false});
+  canvas.addEventListener('touchmove', moveStroke, {passive:false});
+  window.addEventListener('touchend', endStroke);
   clearBtn.addEventListener('click',()=>{ ctx.clearRect(0,0,canvas.width,canvas.height); strokes=[]; if(guideChk.checked) drawGuideChar(); });
   colorInput.addEventListener('input', ()=>{ ctx.strokeStyle=colorInput.value; });
   widthInput.addEventListener('input', ()=>{ ctx.lineWidth=parseInt(widthInput.value)||10; });
@@ -421,6 +450,8 @@ function startDraw(){
     return Math.round(final*100);
   }
   function drawGuideChar(){
+  // currentChar at first load is null; avoid writing 'null' string to canvas
+  if(!currentChar || typeof currentChar !== 'string'){ return; }
     ctx.save();
     // Light temada açık zemin üzerinde görünürlüğü artır
     if(isLightTheme()){
