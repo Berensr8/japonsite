@@ -18,12 +18,21 @@
 .petal{position:fixed;top:-40px;background:radial-gradient(circle at 30% 30%,#ffd4ec,#ffb8de 60%,#ff9fd2);border-radius:60% 40% 60% 40%;pointer-events:none;z-index:2;opacity:.85;animation:fall linear forwards}
 @keyframes fall{0%{transform:translateY(0) rotate(0deg) scale(.8);}100%{transform:translateY(110vh) rotate(360deg) scale(1);} }
 body{background:radial-gradient(circle at 20% 20%,#1c2230,#0f1115 60%);color:var(--text);min-height:100vh;line-height:1.5;-webkit-font-smoothing:antialiased;padding-top:70px;transition:background .6s, color .4s}
+/* Subtle pagoda / temple silhouette background */
+body:after{content:"";position:fixed;bottom:0;right:0;width:520px;height:320px;pointer-events:none;opacity:.10;background:
+  radial-gradient(circle at 70% 30%,rgba(255,255,255,.12),transparent 60%),
+  linear-gradient(to top,rgba(255,255,255,.14),transparent 55%),
+  url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="600" height="400" viewBox="0 0 600 400" fill="none" stroke="%23ffffff22" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M110 300h380M150 300v-40h300v40M180 260v-38h240v38M210 222v-34h180v34M240 188v-30h120v30M270 158v-26h60v26"/></svg>');
+  background-size:100% 100%;background-repeat:no-repeat;mix-blend-mode:overlay;filter:blur(.3px)}
+:root.light body:after{opacity:.16;filter:none}
 header.site-header{position:fixed;top:0;left:0;right:0;height:60px;display:flex;align-items:center;justify-content:space-between;padding:0 28px;z-index:20}
 .glass{background:var(--glass);backdrop-filter:blur(14px) saturate(150%);border:var(--border);border-radius:var(--radius)}
 .logo{font-weight:700;font-size:1.25rem;letter-spacing:.5px}
 .logo span{background:var(--accent-grad);-webkit-background-clip:text;background-clip:text;color:transparent}
 nav a{color:var(--text-dim);text-decoration:none;margin-left:20px;font-weight:500;transition:.25s}
 nav a:hover{color:var(--text)}
+.decor-strip{height:6px;background:repeating-linear-gradient(90deg,#d1499b 0 42px,#8f7bff 42px 84px);opacity:.18;mix-blend-mode:screen;position:relative}
+:root.light .decor-strip{opacity:.3;mix-blend-mode:normal;filter:saturate(.9)}
 .hero{max-width:900px;margin:0 auto;padding:80px 24px 50px;text-align:center}
 .hero h1{font-size:clamp(2.4rem,6vw,3.5rem);line-height:1.1;margin-bottom:22px;background:var(--accent-grad);-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:700}
 .hero p{font-size:1.1rem;color:var(--text-dim);margin-bottom:32px}
@@ -64,6 +73,13 @@ main{max-width:1100px;margin:0 auto;padding:0 24px 120px;position:relative}
 }
 .panel{margin-top:40px}
 .panel h2{font-size:2rem;margin-bottom:20px;font-weight:600}
+/* Japanese heading icons */
+.jp-head{position:relative;padding-left:54px}
+.jp-head:before{content:"";position:absolute;left:0;top:50%;transform:translateY(-50%);width:42px;height:42px;border-radius:14px;background:linear-gradient(135deg,var(--accent) 0%,#ff7ac6 90%);display:flex;align-items:center;justify-content:center;font-size:1.3rem;color:#fff;font-weight:700;letter-spacing:1px;box-shadow:0 6px 18px -6px rgba(0,0,0,.5)}
+.jp-head.jp-quiz:before{content:"⛩";font-size:1.4rem}
+.jp-head.jp-games:before{content:"🎴";font-size:1.3rem}
+.jp-head.jp-table:before{content:"📜";font-size:1.25rem}
+:root.light .jp-head:before{background:linear-gradient(135deg,#ff8ccf,#d1499b)}
 .quiz-card{max-width:420px;padding:32px;margin:16px 0;display:flex;flex-direction:column;align-items:center;gap:18px;box-shadow:var(--shadow)}
 .quiz-card .char{font-size:6rem;font-weight:600;line-height:1}
 .quiz-card input{width:100%;padding:14px 16px;border-radius:12px;background:var(--bg-alt);border:var(--border);color:var(--text);font-size:1.15rem}
@@ -132,6 +148,8 @@ main{max-width:1100px;margin:0 auto;padding:0 24px 120px;position:relative}
 .draw-status{font-size:.75rem;color:var(--text-dim)}
 @media (max-width:780px){.draw-wrap{grid-template-columns:1fr}#drawCanvas{width:100%;height:auto}}
 footer{padding:40px 0;margin-top:60px;text-align:center;color:var(--text-dim);font-size:.85rem}
+.foot-link{color:var(--text-dim);text-decoration:none}
+.foot-link:hover{color:var(--text)}
 .hidden{display:none!important}
 .score-history{margin-top:34px;font-size:.75rem;color:var(--text-dim)}
 .score-history h4{margin-bottom:8px;font-size:.85rem;font-weight:600;color:var(--text)}
@@ -238,3 +256,18 @@ footer{padding:40px 0;margin-top:60px;text-align:center;color:var(--text-dim);fo
 .modal .actions{display:flex;justify-content:flex-end;gap:10px}
 .modal .score-badge{align-self:flex-start;background:var(--accent-grad);padding:6px 12px;border-radius:14px;font-weight:600;font-size:.85rem;letter-spacing:.5px;color:#fff}
 :root.light .modal-overlay{background:rgba(255,220,240,.55)}
+/* Yeni Minimal Consent Bar */
+.consent-bar{position:fixed;left:50%;bottom:14px;transform:translateX(-50%) translateY(30px);max-width:840px;width:calc(100% - 26px);padding:14px 18px;display:flex;flex-direction:column;gap:10px;z-index:180;background:var(--glass);border:var(--border);border-radius:18px;box-shadow:0 10px 30px -8px rgba(0,0,0,.55);opacity:0;transition:transform .45s cubic-bezier(.4,.8,.3,1),opacity .5s}
+.consent-bar.show{transform:translateX(-50%) translateY(0);opacity:1}
+.consent-bar .consent-main{display:flex;flex-wrap:wrap;align-items:center;gap:14px}
+.consent-bar .consent-text{flex:1 1 360px;font-size:.78rem;line-height:1.35;color:var(--text-dim)}
+.consent-bar .consent-actions{display:flex;align-items:center;gap:8px}
+.consent-bar button{padding:10px 18px;font-size:.72rem}
+.consent-details{font-size:.7rem;line-height:1.4;color:var(--text-dim);border-top:1px solid rgba(255,255,255,.1);padding-top:8px;margin-top:2px;animation:fadeIn .3s}
+.consent-small-actions{margin-top:4px;display:flex;gap:8px;flex-wrap:wrap}
+.consent-small-actions .small{padding:6px 12px;font-size:.65rem}
+@media (max-width:640px){
+  .consent-bar .consent-actions{width:100%;justify-content:flex-start}
+  .consent-bar button{flex:0 0 auto}
+}
+:root.light .consent-bar{background:rgba(255,255,255,.75);box-shadow:0 10px 30px -8px rgba(160,60,120,.35)}
