@@ -4,6 +4,8 @@ import { HIRAGANA, getRomajiList, markAttempt, loadProgress, getEnabledCharsFrom
 const SCORE_KEY = 'hiraganaGameScoresV1';
 function loadScores(){ try{return JSON.parse(localStorage.getItem(SCORE_KEY)||'[]');}catch(e){return [];} }
 function saveScore(entry){ const arr = loadScores(); arr.unshift(entry); while(arr.length>100) arr.pop(); localStorage.setItem(SCORE_KEY, JSON.stringify(arr)); renderScoreHistory(); }
+// Analytics helper (no-op if gtag missing)
+function track(event, params={}){ try{ if(typeof gtag==='function'){ gtag('event', event, params); } }catch(e){} }
 function latestScoreFor(game){
   const list = loadScores();
   return list.find(s=>s.game===game);
@@ -163,6 +165,7 @@ function startMemory(){
           feedback.className='feedback ok';
           saveScore({game:'memory', pairs:totalPairs, duration:parseInt(document.getElementById('memoryDuration').value), remaining, ts:Date.now()});
           refreshTileScores();
+          track('score_submit',{game:'memory', pairs:totalPairs, remaining});
           stop();
         }
       }
@@ -182,6 +185,7 @@ function startMemory(){
     buildBoard(); // kartlar başlangıca kadar gizliydi
     time=parseInt(document.getElementById('memoryDuration').value)||60;
     timerEl.textContent=time; running=true; interval=setInterval(tick,1000);
+  track('game_start',{game:'memory', duration:time, pairs:parseInt(document.getElementById('memoryPairs').value)||8});
     if(getEnabledCharsFromGroups().length < (parseInt(document.getElementById('memoryPairs').value)||8)){
       feedback.textContent='Seçili grup sayısı daha az, çift sayısı otomatik küçültüldü.';
       feedback.className='feedback';
@@ -193,6 +197,7 @@ function startMemory(){
     const remaining = time; // kalan süre
     saveScore({game:'memory', pairs:totalPairs, duration:parseInt(document.getElementById('memoryDuration').value), remaining, ts:Date.now()});
   refreshTileScores();
+  track('score_submit',{game:'memory', pairs:totalPairs, remaining});
     stop();
   });
 
@@ -252,6 +257,7 @@ function startTyping(){
     if(running) return;
     time=parseInt(document.getElementById('typingDuration').value)||30; timerEl.textContent=time; score=0; scoreEl.textContent='0'; feedback.textContent=''; feedback.className='feedback';
     running=true; newChar(); inputEl.focus(); interval=setInterval(tick,1000);
+  track('game_start',{game:'typing', duration:time});
   });
   finishBtn.addEventListener('click',()=>{
     if(!running) return;
@@ -259,6 +265,7 @@ function startTyping(){
     feedback.textContent='Erken bitirdin! Skor: '+score; feedback.className='feedback';
     saveScore({game:'typing', score, duration:parseInt(document.getElementById('typingDuration').value), ts:Date.now()});
   refreshTileScores();
+  track('score_submit',{game:'typing', score});
   });
 
   registerCleanup(()=>{ if(interval){ clearInterval(interval); } running=false; });
@@ -433,6 +440,7 @@ function startDraw(){
   function endSession(){
     saveScore({game:'draw', correct:correctCount, asked, mode: totalModeChk.checked?'total':'round', duration: parseInt(durSel.value), totalDuration: totalDuration||0, ts:Date.now()});
   refreshTileScores();
+  track('score_submit',{game:'draw', correct:correctCount, asked});
   }
   doneBtn.addEventListener('click',()=>{
     if(!running) return;
