@@ -545,21 +545,107 @@ function startFlash(){
   const prevBtn = document.getElementById('flashPrev');
   const nextBtn = document.getElementById('flashNext');
   const flipBtn = document.getElementById('flashFlip');
+  // Havuzu seçili gruplara göre oluştur ve karıştır
+  function buildPool(){
+    const enabled = getEnabledCharsFromGroups();
+    let pool = HIRAGANA.filter(r=>enabled.includes(r[0]));
+    if(!pool.length) pool = [...HIRAGANA];
+    return shuffle([...pool]);
+  }
+  let pool = buildPool();
   let idx=0;
   function render(){
-    const item = HIRAGANA[idx];
+    if(!pool.length){ pool = buildPool(); idx=0; }
+    const item = pool[idx];
     front.textContent=item[0];
     back.textContent=item.slice(1).join(', ');
     card.classList.remove('flipped');
   }
-  prevBtn.addEventListener('click',()=>{ idx=(idx-1+HIRAGANA.length)%HIRAGANA.length; render(); });
-  nextBtn.addEventListener('click',()=>{ idx=(idx+1)%HIRAGANA.length; render(); });
+  prevBtn.addEventListener('click',()=>{ idx=(idx-1+pool.length)%pool.length; render(); });
+  nextBtn.addEventListener('click',()=>{ idx=(idx+1)%pool.length; render(); });
   flipBtn.addEventListener('click',()=>{ card.classList.toggle('flipped'); });
   card.addEventListener('click',()=>{ card.classList.toggle('flipped'); });
   render();
 }
 
-const dispatch = { memory:startMemory, typing:startTyping, flash:startFlash, draw:startDraw };
+// ---- WORD GAME (Word building / recognition) ----
+// Basit kelime sözlüğü: ['hiragana','romaji','tr','en']
+const WORD_LIST = [
+  ['あい','ai','sevgi','love'],
+  ['いえ','ie','ev','house'],
+  ['うえ','ue','üst','above'],
+  ['あさ','asa','sabah','morning'],
+  ['あめ','ame','yağmur','rain'],
+  ['いく','iku','gitmek','go'],
+  ['あお','ao','mavi','blue'],
+  ['いし','ishi','taş','stone'],
+  ['うみ','umi','deniz','sea'],
+  ['えき','eki','istasyon','station'],
+  ['あか','aka','kırmızı','red'],
+  ['あし','ashi','ayak','foot'],
+  ['さけ','sake','pirinç şarabı','rice wine'],
+  ['すし','sushi','suşi','sushi'],
+  ['こころ','kokoro','kalp','heart'],
+  ['みみ','mimi','kulak','ear'],
+  ['やま','yama','dağ','mountain'],
+  ['かわ','kawa','nehir','river'],
+  ['はな','hana','çiçek','flower'],
+  ['そら','sora','gökyüzü','sky'],
+];
+
+function startWord(){
+  gameArea.classList.remove('hidden');
+  gameArea.innerHTML = `<h3>${t('word_title')}</h3>
+    <div class="word-wrap">
+      <div id="wordTarget" class="word-target">あい</div>
+      <div class="word-input-row"><input id="wordInput" autocomplete="off" placeholder="romaji" /> <button id="wordCheck" class="primary">${t('word_check')}</button> <button id="wordNext" class="ghost">${t('word_next')}</button></div>
+      <div id="wordFeedback" class="feedback"></div>
+      <div id="wordScore" class="word-score"></div>
+    </div>`;
+  const targetEl = document.getElementById('wordTarget');
+  const inputEl = document.getElementById('wordInput');
+  const checkBtn = document.getElementById('wordCheck');
+  const nextBtn = document.getElementById('wordNext');
+  const feedback = document.getElementById('wordFeedback');
+  const scoreEl = document.getElementById('wordScore');
+  let current=null, asked=0, correct=0;
+
+  function enabledSet(){ return new Set(getEnabledCharsFromGroups()); }
+  function filteredWords(){
+    const set = enabledSet();
+    // kelimenin tüm karakterleri seçili gruplarda olmalı
+    return WORD_LIST.filter(w=> w[0].split('').every(ch=> set.has(ch)) );
+  }
+  let pool = filteredWords();
+  if(!pool.length){
+    feedback.textContent = t('word_no_words');
+    feedback.className='feedback err';
+    return;
+  }
+  function pick(){
+    if(!pool.length){ pool = filteredWords(); }
+    current = pool[Math.floor(Math.random()*pool.length)];
+    targetEl.textContent = current[0];
+    inputEl.value=''; inputEl.focus();
+    feedback.textContent=''; feedback.className='feedback';
+  }
+  function updateScore(){ scoreEl.textContent = t('word_score_line',{correct, total:asked}); }
+  function meaningFor(item){ return getLang()==='tr'? item[2] : item[3]; }
+  function check(){
+    if(!current) return;
+    const val = inputEl.value.trim().toLowerCase();
+    asked++; if(val === current[1]){ correct++; feedback.textContent = t('word_correct',{meaning:meaningFor(current)}); feedback.className='feedback ok'; markAttempt(progressCache, current[0][0], true); }
+    else { feedback.textContent = t('word_wrong',{answer:current[1]}); feedback.className='feedback err'; markAttempt(progressCache, current[0][0], false); }
+    updateScore();
+  }
+  checkBtn.addEventListener('click', ()=>{ check(); });
+  nextBtn.addEventListener('click', ()=>{ pick(); });
+  inputEl.addEventListener('keydown', e=>{ if(e.key==='Enter'){ check(); } });
+  pick(); updateScore();
+  registerCleanup(()=>{});
+}
+
+const dispatch = { memory:startMemory, typing:startTyping, flash:startFlash, draw:startDraw, word:startWord };
 renderScoreHistory();
 refreshTileScores();
 
