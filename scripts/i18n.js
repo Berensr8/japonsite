@@ -53,7 +53,17 @@ const dict = {
     modal_auto_score: 'Otomatik skor', modal_score: 'Skor', modal_threshold: 'Eşik', modal_accept_question: 'Doğru kabul edilsin mi?', modal_under_question: 'Eşik altında. Yine de doğru saymak ister misin?', modal_wrong: 'Yanlış', modal_correct: 'Doğru Say',
     flash_prev: 'Önceki', flash_flip: 'Çevir', flash_next: 'Sonraki',
     consent_accept: 'Kabul', consent_reject: 'Reddet', consent_details: 'Detaylar', consent_reset: 'Tercihi Sıfırla', consent_close: 'Kapat',
-    manage_consent: 'Çerez Tercihi', privacy: 'Gizlilik', groups_title: 'Harf Grupları', groups_hint: 'Seçtiklerin tüm quiz ve oyunlara uygulanır.', groups_fab: 'Gruplar'
+  manage_consent: 'Çerez Tercihi', privacy: 'Gizlilik', groups_title: 'Harf Grupları', groups_hint: 'Seçtiklerin tüm quiz ve oyunlara uygulanır.', groups_fab: 'Gruplar',
+  // Word game
+  word_title: 'Kelime Yaz',
+  word_desc: 'Gösterilen Hiragana kelimenin okunuşunu yaz ve anlamını öğren.',
+  word_check: 'Kontrol',
+  word_next: 'Sonraki',
+  word_correct: 'Doğru! Anlamı: {meaning}',
+  word_wrong: 'Yanlış. Doğrusu: {answer}',
+  word_no_words: 'Seçili harf gruplarıyla uygun kelime yok.',
+  word_score_line: 'Doğru {correct}/{total}',
+  word_score_history_line: 'Kelime ({correct}/{total})'
   },
   en: {
     nav_quiz: 'Quiz', nav_games: 'Games', nav_table: 'Full Chart',
@@ -88,7 +98,17 @@ const dict = {
     modal_auto_score: 'Auto score', modal_score: 'Score', modal_threshold: 'Threshold', modal_accept_question: 'Count as correct?', modal_under_question: 'Below threshold. Count as correct anyway?', modal_wrong: 'Wrong', modal_correct: 'Count Correct',
     flash_prev: 'Prev', flash_flip: 'Flip', flash_next: 'Next',
     consent_accept: 'Accept', consent_reject: 'Reject', consent_details: 'Details', consent_reset: 'Reset Choice', consent_close: 'Close',
-    manage_consent: 'Cookie Preference', privacy: 'Privacy', groups_title: 'Letter Groups', groups_hint: 'Selections apply to all quizzes & games.', groups_fab: 'Groups'
+  manage_consent: 'Cookie Preference', privacy: 'Privacy', groups_title: 'Letter Groups', groups_hint: 'Selections apply to all quizzes & games.', groups_fab: 'Groups',
+  // Word game
+  word_title: 'Word Write',
+  word_desc: 'Type the romaji reading of the shown Hiragana word to see its meaning.',
+  word_check: 'Check',
+  word_next: 'Next',
+  word_correct: 'Correct! Meaning: {meaning}',
+  word_wrong: 'Wrong. Answer: {answer}',
+  word_no_words: 'No valid words for selected groups.',
+  word_score_line: 'Correct {correct}/{total}',
+  word_score_history_line: 'Word ({correct}/{total})'
   }
 };
 
