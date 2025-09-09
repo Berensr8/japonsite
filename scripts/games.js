@@ -1,6 +1,7 @@
 import { HIRAGANA, getRomajiList, markAttempt, loadProgress, getEnabledCharsFromGroups } from './data.js';
+import { t, getLang, onLangChange } from './i18n.js';
 
-// Basit skor geçmişi
+// Basit skor geçmişi / simple score history
 const SCORE_KEY = 'hiraganaGameScoresV1';
 function loadScores(){ try{return JSON.parse(localStorage.getItem(SCORE_KEY)||'[]');}catch(e){return [];} }
 function saveScore(entry){ const arr = loadScores(); arr.unshift(entry); while(arr.length>100) arr.pop(); localStorage.setItem(SCORE_KEY, JSON.stringify(arr)); renderScoreHistory(); }
@@ -16,7 +17,7 @@ function refreshTileScores(){
     if(!span) return;
     const g = tile.dataset.game;
     const data = latestScoreFor(g);
-    if(!data){ span.textContent='Son skor yok'; return; }
+  if(!data){ span.textContent=t('last_score_none'); return; }
     let text='';
     if(g==='typing') text=`${data.score} puan / ${data.duration}s`;
     else if(g==='memory') text=`${data.pairs} çift • +${data.remaining}s`;
@@ -30,18 +31,18 @@ function renderScoreHistory(){
   if(!box) return;
   const data = loadScores().slice(0,10);
   box.innerHTML='';
-  const head = document.createElement('div'); head.innerHTML='<h4>Son Skorlar</h4>';
-  const clearBtn = document.createElement('button'); clearBtn.textContent='Temizle'; clearBtn.className='ghost'; clearBtn.style.marginLeft='10px';
+  const head = document.createElement('div'); head.innerHTML='<h4>'+t('session_done').split('!')[0]+' '+t('clear')+'</h4>';
+  const clearBtn = document.createElement('button'); clearBtn.textContent=t('clear'); clearBtn.className='ghost'; clearBtn.style.marginLeft='10px';
   clearBtn.addEventListener('click',()=>{ localStorage.removeItem(SCORE_KEY); renderScoreHistory(); });
   head.appendChild(clearBtn); box.appendChild(head);
-  if(!data.length){ const empty=document.createElement('div'); empty.className='score-item'; empty.textContent='Kayıt yok'; box.appendChild(empty); return; }
+  if(!data.length){ const empty=document.createElement('div'); empty.className='score-item'; empty.textContent=t('no_records'); box.appendChild(empty); return; }
   const list=document.createElement('div'); list.className='score-list';
   data.forEach(s=>{
     const d=new Date(s.ts); const time=d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
     let line='';
-    if(s.game==='typing') line=`Yaz (${s.duration}s) - Skor ${s.score}`;
-    else if(s.game==='memory') line=`Hafıza (${s.pairs} çift) kalan ${s.remaining}s`;
-    else if(s.game==='draw') line=`Çizim (${s.mode==='total'?'Toplam':'Tur'} ${s.totalDuration||s.duration}s) Doğru ${s.correct}/${s.asked}`;
+  if(s.game==='typing') line=t('typing_score_line',{duration:s.duration, score:s.score});
+  else if(s.game==='memory') line=t('memory_score_line',{pairs:s.pairs, remaining:s.remaining});
+  else if(s.game==='draw') line=t('draw_score_line',{mode:(s.mode==='total'? t('total_mode'): t('round')), dur:(s.totalDuration||s.duration), correct:s.correct, asked:s.asked});
     const div=document.createElement('div'); div.className='score-item'; div.textContent=`${time} · ${line}`; list.appendChild(div);
   });
   box.appendChild(list);
@@ -93,8 +94,8 @@ function startMemory(){
   } else {
     pairOptions = validCounts.map(c=>`<option value="${c}" ${c===defaultPairs?'selected':''}>${c}</option>`).join('');
   }
-  gameArea.innerHTML=`<h3>Hafıza Eşleştirme</h3>
-    <div class="memory-config">Süre: <select id="memoryDuration">${durOptions}</select> Çift: <select id="memoryPairs">${pairOptions}</select> <button id="memoryStart" class="primary">Başlat</button> <button id="memoryFinish" class="ghost">Bitir</button> <span id="memoryTimer">0</span>s | Eşleşen: <span id="memoryMatched">0</span>/<span id="memoryTotal">0</span></div>
+  gameArea.innerHTML=`<h3>${t('memory_title')}</h3>
+    <div class="memory-config">${t('duration')}: <select id="memoryDuration">${durOptions}</select> ${t('pairs')}: <select id="memoryPairs">${pairOptions}</select> <button id="memoryStart" class="primary">${t('start')}</button> <button id="memoryFinish" class="ghost">${t('finish')}</button> <span id="memoryTimer">0</span>s | ${t('matched_pairs')}: <span id="memoryMatched">0</span>/<span id="memoryTotal">0</span></div>
     <div class="memory-columns" id="memoryCols"><div class="mem-col" id="memLeft"></div><div class="mem-col" id="memRight"></div></div>
     <div id="memoryFeedback" class="feedback"></div>`;
   const leftEl = document.getElementById('memLeft');
@@ -161,7 +162,7 @@ function startMemory(){
         matched++; matchedEl.textContent=matched;
         if(matched===totalPairs){
           const remaining = (parseInt(document.getElementById('memoryDuration').value)-time);
-          feedback.textContent='Tebrikler! '+remaining+'s kala bitirdin.';
+          feedback.textContent=t('congrats_remaining',{sec:remaining});
           feedback.className='feedback ok';
           saveScore({game:'memory', pairs:totalPairs, duration:parseInt(document.getElementById('memoryDuration').value), remaining, ts:Date.now()});
           refreshTileScores();
@@ -175,25 +176,25 @@ function startMemory(){
 
   function tick(){
     time--; timerEl.textContent=time;
-  if(time<=0){ feedback.textContent='Süre bitti!'; feedback.className='feedback err'; saveScore({game:'memory', pairs:totalPairs, duration:parseInt(document.getElementById('memoryDuration').value), remaining:0, ts:Date.now()}); stop(); }
+  if(time<=0){ feedback.textContent=t('time_up'); feedback.className='feedback err'; saveScore({game:'memory', pairs:totalPairs, duration:parseInt(document.getElementById('memoryDuration').value), remaining:0, ts:Date.now()}); stop(); }
   }
 
   function stop(){ running=false; clearInterval(interval); interval=null; }
 
   startBtn.addEventListener('click',()=>{
-    if(running) return; feedback.textContent=''; feedback.className='feedback';
+  if(running) return; feedback.textContent=''; feedback.className='feedback';
     buildBoard(); // kartlar başlangıca kadar gizliydi
     time=parseInt(document.getElementById('memoryDuration').value)||60;
     timerEl.textContent=time; running=true; interval=setInterval(tick,1000);
   track('game_start',{game:'memory', duration:time, pairs:parseInt(document.getElementById('memoryPairs').value)||8});
     if(getEnabledCharsFromGroups().length < (parseInt(document.getElementById('memoryPairs').value)||8)){
-      feedback.textContent='Seçili grup sayısı daha az, çift sayısı otomatik küçültüldü.';
+  feedback.textContent=t('reduced_pairs_warning');
       feedback.className='feedback';
     }
   });
   finishBtn.addEventListener('click',()=>{
     if(!running) return;
-    feedback.textContent='Erken bitirdin.'; feedback.className='feedback';
+  feedback.textContent=t('early_finish'); feedback.className='feedback';
     const remaining = time; // kalan süre
     saveScore({game:'memory', pairs:totalPairs, duration:parseInt(document.getElementById('memoryDuration').value), remaining, ts:Date.now()});
   refreshTileScores();
@@ -208,13 +209,13 @@ function startMemory(){
 function startTyping(){
   gameArea.classList.remove('hidden');
   const durOptions='<option value="15">15s</option><option value="30" selected>30s</option><option value="45">45s</option><option value="60">60s</option><option value="120">120s</option>';
-  gameArea.innerHTML=`<h3>Hızlı Yaz</h3>
+  gameArea.innerHTML=`<h3>${t('typing_title')}</h3>
     <div class="typing-wrap">
-    <div class="typing-config">Süre: <select id="typingDuration">${durOptions}</select> <button id="typingStart" class="primary">Başlat</button> <button id="typingFinish" class="ghost">Bitir</button></div>
+    <div class="typing-config">${t('duration')}: <select id="typingDuration">${durOptions}</select> <button id="typingStart" class="primary">${t('start')}</button> <button id="typingFinish" class="ghost">${t('finish')}</button></div>
       <div class="typing-target" id="typingTarget">あ</div>
       <div class="typing-input-wrap"><input id="typingInput" placeholder="romaji" autocomplete="off" /><div class="ti-underline"></div></div>
       <div id="typingFeedback" class="feedback"></div>
-      <div class="typing-status"><span id="typingTimer">0</span>s | Skor: <span id="typingScore">0</span></div>
+  <div class="typing-status"><span id="typingTimer">0</span>s | Score: <span id="typingScore">0</span></div>
     </div>`;
   const targetEl = document.getElementById('typingTarget');
   const inputEl = document.getElementById('typingInput');
@@ -237,7 +238,7 @@ function startTyping(){
   }
   function tick(){
     time--; timerEl.textContent=time;
-  if(time<=0){ clearInterval(interval); interval=null; running=false; feedback.textContent='Süre bitti! Skor: '+score; feedback.className='feedback'; saveScore({game:'typing', score, duration:parseInt(document.getElementById('typingDuration').value), ts:Date.now()}); }
+  if(time<=0){ clearInterval(interval); interval=null; running=false; feedback.textContent=t('typing_time_up',{score}); feedback.className='feedback'; saveScore({game:'typing', score, duration:parseInt(document.getElementById('typingDuration').value), ts:Date.now()}); }
   }
   inputEl.addEventListener('keydown', e=>{ if(e.key==='Enter'){ check(); }});
   function check(){
@@ -248,7 +249,7 @@ function startTyping(){
       score++; scoreEl.textContent=score; feedback.textContent='✓'; feedback.className='feedback ok';
       markAttempt(progressCache, current, true);
     } else {
-      feedback.textContent='✗ '+correctList[0]; feedback.className='feedback err';
+  feedback.textContent='✗ '+correctList[0]; feedback.className='feedback err';
       markAttempt(progressCache, current, false);
     }
     newChar();
@@ -262,7 +263,7 @@ function startTyping(){
   finishBtn.addEventListener('click',()=>{
     if(!running) return;
     clearInterval(interval); interval=null; running=false;
-    feedback.textContent='Erken bitirdin! Skor: '+score; feedback.className='feedback';
+  feedback.textContent=t('typing_early_finish',{score}); feedback.className='feedback';
     saveScore({game:'typing', score, duration:parseInt(document.getElementById('typingDuration').value), ts:Date.now()});
   refreshTileScores();
   track('score_submit',{game:'typing', score});
@@ -274,21 +275,21 @@ function startTyping(){
 // Çizim Oyunu -------------------------------------------------
 function startDraw(){
   gameArea.classList.remove('hidden');
-  gameArea.innerHTML=`<h3>Çizim</h3><div class="draw-wrap"><div class="draw-left"><div id="drawTarget" class="draw-target">a</div>
+  gameArea.innerHTML=`<h3>${t('draw_title')}</h3><div class="draw-wrap"><div class="draw-left"><div id="drawTarget" class="draw-target">a</div>
     <div class="draw-controls">
       <div class="ctrl-groups">
-        <div class="ctrl-box"><label>Tur
+  <div class="ctrl-box"><label>${t('round')}
           <select id="drawDuration"><option value="15">15s</option><option value="20" selected>20s</option><option value="30">30s</option><option value="45">45s</option><option value="60">60s</option></select>
         </label></div>
-        <div class="ctrl-box"><label style="display:flex;align-items:center;gap:6px"><input type="checkbox" id="drawTotalMode"> Toplam</label>
+  <div class="ctrl-box"><label style="display:flex;align-items:center;gap:6px"><input type="checkbox" id="drawTotalMode"> ${t('total_mode')}</label>
           <input id="drawTotalSeconds" type="number" min="30" max="600" step="10" value="120" title="Toplam süre (s)" style="width:80px">s
         </div>
         <div class="ctrl-box small-row">
-          <label class="color-label">Renk <input type="color" id="drawColor" value="#ffffff"></label>
-          <label>Kalınlık <input type="range" id="drawWidth" min="4" max="28" value="10"></label>
+          <label class="color-label">${t('color')} <input type="color" id="drawColor" value="#ffffff"></label>
+          <label>${t('thickness')} <input type="range" id="drawWidth" min="4" max="28" value="10"></label>
         </div>
-        <div class="ctrl-box"><label style="display:flex;align-items:center;gap:6px"><input type="checkbox" id="drawGuide" checked> Rehber</label></div>
-  <div class="ctrl-box actions"><button id="drawStart" class="primary">Başlat</button> <button id="drawNext" class="ghost" style="display:none">Yeni</button> <button id="drawClear" class="ghost" style="display:none">Temizle</button> <button id="drawDone" class="primary" style="display:none">Tamam</button> <button id="drawFinish" class="ghost" style="display:none">Bitir</button></div>
+    <div class="ctrl-box"><label style="display:flex;align-items:center;gap:6px"><input type="checkbox" id="drawGuide" checked> ${t('guide')}</label></div>
+  <div class="ctrl-box actions"><button id="drawStart" class="primary">${t('start')}</button> <button id="drawNext" class="ghost" style="display:none">${t('new_btn')}</button> <button id="drawClear" class="ghost" style="display:none">${t('clear_btn')}</button> <button id="drawDone" class="primary" style="display:none">${t('done_btn')}</button> <button id="drawFinish" class="ghost" style="display:none">${t('finish_btn')}</button></div>
       </div>
       <div id="drawStatus" class="draw-status"></div>
     </div></div><canvas id="drawCanvas" width="320" height="320"></canvas></div>`;
@@ -331,7 +332,7 @@ function startDraw(){
   ctx.clearRect(0,0,canvas.width,canvas.height); strokes=[]; if(guideChk.checked) drawGuideChar();
   }
   function tick(){
-    time--; statusEl.textContent=`${time}s | Doğru: ${correctCount}/${asked}`;
+  time--; statusEl.textContent=`${time}s | ${t('correct_short')} ${correctCount}/${asked}`;
     if(time<=0){ finishRound(); }
   }
   function startRound(){
@@ -348,7 +349,7 @@ function startDraw(){
     if(totalModeChk.checked){ statusEl.textContent = `${time}s | Toplam ${totalTimer}s | Doğru: ${correctCount}/${asked-1}`; }
   }
   function finishRound(){
-    running=false; clearInterval(interval); interval=null; statusEl.textContent+= ' | Tur bitti';
+  running=false; clearInterval(interval); interval=null; statusEl.textContent+= t('draw_round_end');
   }
   // --- Pointer (mouse + touch + pen) destekli çizim ---
   function pointerPos(evt){
@@ -369,7 +370,7 @@ function startDraw(){
     ctx.beginPath(); ctx.moveTo(last[0],last[1]); ctx.lineTo(x,y); ctx.stroke(); last=[x,y]; strokes[strokes.length-1].push([x,y]);
     if(running && strokes.length && strokes[strokes.length-1].length%6===0){
       const sc=similarityScore();
-      statusEl.textContent=`${time}s${totalModeChk.checked?` | Toplam ${totalTimer}s`:''} | Skor ~${sc} | Doğru: ${correctCount}/${asked-1}`;
+  statusEl.textContent=`${time}s${totalModeChk.checked?` | ${t('total_mode')} ${totalTimer}s`:''} | ${t('draw_status_score',{score:sc})} | ${t('correct_short')} ${correctCount}/${asked-1}`;
     }
   }
   function endStroke(){ drawing=false; }
@@ -511,12 +512,12 @@ function showDrawResultDialog(score, threshold){
     box.className='modal glass';
     const success = score >= threshold;
     box.innerHTML = `
-      <h4>${success? 'Otomatik skor' : 'Skor'} ≈${score}</h4>
+      <h4>${success? t('modal_auto_score') : t('modal_score')} ≈${score}</h4>
       <div class="score-badge" aria-label="skor">${score}</div>
-      <div class="modal-text">Eşik: <strong>${threshold}</strong><br>${success? 'Doğru kabul edilsin mi?' : 'Eşik altında. Yine de doğru saymak ister misin?'}</div>
+      <div class="modal-text">${t('modal_threshold')}: <strong>${threshold}</strong><br>${success? t('modal_accept_question') : t('modal_under_question')}</div>
       <div class="actions">
-        <button class="ghost" data-act="no">Yanlış</button>
-        <button class="primary" data-act="yes">Doğru Say</button>
+        <button class="ghost" data-act="no">${t('modal_wrong')}</button>
+        <button class="primary" data-act="yes">${t('modal_correct')}</button>
       </div>`;
     ov.appendChild(box); document.body.appendChild(ov);
     const focusBtn = box.querySelector('[data-act="yes"]');
@@ -536,7 +537,7 @@ function showDrawResultDialog(score, threshold){
 // FLASH CARDS -------------------------------------------------
 function startFlash(){
   gameArea.classList.remove('hidden');
-  gameArea.innerHTML='<h3>Flash Kart</h3><div class="flash-wrap"><div class="flash-card" id="flashCard"><div class="flash-inner"><div class="flash-face">あ</div><div class="flash-face flash-back">romaji</div></div></div><div><button id="flashPrev" class="ghost">Önceki</button><button id="flashFlip" class="primary">Çevir</button><button id="flashNext" class="ghost">Sonraki</button></div></div>';
+  gameArea.innerHTML='<h3>'+t('flash_title')+'</h3><div class="flash-wrap"><div class="flash-card" id="flashCard"><div class="flash-inner"><div class="flash-face">あ</div><div class="flash-face flash-back">romaji</div></div></div><div><button id="flashPrev" class="ghost">'+t('flash_prev')+'</button><button id="flashFlip" class="primary">'+t('flash_flip')+'</button><button id="flashNext" class="ghost">'+t('flash_next')+'</button></div></div>';
   const card = document.getElementById('flashCard');
   const inner = card.querySelector('.flash-inner');
   const front = inner.querySelector('.flash-face');
