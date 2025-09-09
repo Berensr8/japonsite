@@ -64,6 +64,15 @@ const dict = {
   word_no_words: 'Seçili harf gruplarıyla uygun kelime yok.',
   word_score_line: 'Doğru {correct}/{total}',
   word_score_history_line: 'Kelime ({correct}/{total})'
+  , word_length_label: 'Harf sayısı', word_length_any: 'Hepsi', word_no_words_len: 'Bu uzunlukta uygun kelime yok, tüm uzunluklar gösteriliyor.'
+  , word_listen: 'Dinle'
+  , word_audio_missing: 'Ses bulunamadı (dosya yok).'
+  , word_audio_error: 'Ses çalınamadı.'
+  , word_packs_label: 'Kelime Paketleri'
+  , word_pack_food: 'Yiyecek'
+  , word_pack_transport: 'Ulaşım'
+  , word_pack_greetings: 'Selamlaşma'
+  , word_pack_none_selected: 'Hiç paket seçilmedi.'
   },
   en: {
     nav_quiz: 'Quiz', nav_games: 'Games', nav_table: 'Full Chart',
@@ -109,6 +118,15 @@ const dict = {
   word_no_words: 'No valid words for selected groups.',
   word_score_line: 'Correct {correct}/{total}',
   word_score_history_line: 'Word ({correct}/{total})'
+  , word_length_label: 'Word length', word_length_any: 'All', word_no_words_len: 'No words of that length; showing all.'
+  , word_listen: 'Listen'
+  , word_audio_missing: 'Audio not found.'
+  , word_audio_error: 'Audio playback failed.'
+  , word_packs_label: 'Word Packs'
+  , word_pack_food: 'Food'
+  , word_pack_transport: 'Transport'
+  , word_pack_greetings: 'Greetings'
+  , word_pack_none_selected: 'No pack selected.'
   }
 };
 
