@@ -13,3 +13,4 @@ Basit bir konsol tabanlı Hiragana öğrenme / pekiştirme aracı. Spaced repeti
  - Web arayüzü (modern tasarım)
  - Sıralı Öğrenme Modu (mastery based): Her karakter için varsayılan 6 doğru cevap gerek, yanlışta ilerleme sayacı artmaz, doğru olunca mastery artar. Bir karakter yeterli seviyeye geldiğinde havuzdan çıkar ve bir sonraki karakter açılır.
  - Mastered (tamamlanan) karakterler için karışık quiz modu.
+https://hiraganalab.netlify.app/
