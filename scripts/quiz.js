@@ -1,4 +1,5 @@
 import { HIRAGANA, HIRAGANA_GROUPS, loadProgress, markAttempt, getRomajiList, getLearningState, getLearningActiveChars, getCharMastery, learningSelectNext, recordLearningAnswer, loadGroupPrefs, saveGroupPrefs, getEnabledCharsFromGroups } from './data.js';
+import { t } from './i18n.js';
 
 const quizSection = document.getElementById('quiz');
 const startQuizBtn = document.getElementById('startQuiz');
@@ -147,7 +148,7 @@ function nextChar(){
       }
     }
     if(!currentChar){
-      feedbackEl.textContent = 'Tüm karakterler mastery tamamlandı!';
+  feedbackEl.textContent = t('all_mastered');
       feedbackEl.className = 'feedback ok';
       updateProgressBar();
       return;
@@ -156,7 +157,7 @@ function nextChar(){
     if(!queue.length){
       buildQueue();
       if(!queue.length){
-        feedbackEl.textContent = 'Tebrikler! Oturum bitti.';
+  feedbackEl.textContent = t('session_done');
         feedbackEl.className = 'feedback ok';
         updateProgressBar();
         return;
@@ -178,14 +179,14 @@ function updateProgressBar(){
   const learned = progress.learned.length;
   const total = HIRAGANA.length;
   progressBar.style.width = (learned/total*100).toFixed(1)+'%';
-  sessionStats.textContent = `Doğru: ${sessionCorrect} | Yanlış: ${sessionIncorrect} | Öğrenilen: ${learned}/${total} (Mod: ${mode})`;
+  sessionStats.textContent = t('session_stats',{correct:sessionCorrect, wrong:sessionIncorrect, learned, total, mode});
   window.dispatchEvent(new CustomEvent('session-stats', {detail:{sessionCorrect, sessionIncorrect}}));
 }
 
 function updateTestStatus(){
   if(mode!=='test'){ testStatusEl?.classList.add('hidden'); return; }
   testStatusEl.classList.remove('hidden');
-  testStatusEl.textContent = `Soru ${testAsked+1}/${testTotal} · Skor ${sessionCorrect}`;
+  testStatusEl.textContent = t('test_status',{current:testAsked+1,total:testTotal,score:sessionCorrect});
 }
 
 function renderLearningStats(){
@@ -195,7 +196,7 @@ function renderLearningStats(){
   const mastered = L.mastered.length;
   const need = L.requiredMastery;
   const activeStr = active.map(c=>`${c}:${getCharMastery(progress,c)||0}/${need}`).join('  ');
-  learningStats.textContent = `Aktif (${active.length}) -> ${activeStr}\nMastered: ${mastered}/${HIRAGANA.length}`;
+  learningStats.textContent = t('learning_active_label',{count:active.length,list:activeStr,mastered, total:HIRAGANA.length});
 }
 
 function submitAnswer(fromChoice=false){
@@ -204,13 +205,13 @@ function submitAnswer(fromChoice=false){
   const list = getRomajiList(currentChar).map(x=>x.toLowerCase());
   const correct = list.includes(val);
   if(correct){
-    feedbackEl.textContent = 'Doğru!';
+  feedbackEl.textContent = t('correct_short');
     feedbackEl.className = 'feedback ok';
     sessionCorrect++;
     markAttempt(progress, currentChar, true);
     if(mode === 'learning') recordLearningAnswer(progress, currentChar, true);
   } else {
-    feedbackEl.textContent = 'Yanlış. Doğrusu: '+list[0];
+  feedbackEl.textContent = t('wrong_with_answer',{answer:list[0]});
     feedbackEl.className = 'feedback err';
     sessionIncorrect++;
     markAttempt(progress, currentChar, false);
@@ -226,7 +227,7 @@ function submitAnswer(fromChoice=false){
   renderLearningStats();
   if(mode==='test'){
     if(testAsked>=testTotal){
-      feedbackEl.textContent = `Test bitti! Skor: ${sessionCorrect}/${testTotal}`;
+  feedbackEl.textContent = t('test_finished',{score:sessionCorrect,total:testTotal});
       feedbackEl.className='feedback ok';
       choiceArea.classList.add('hidden');
       return;
@@ -247,7 +248,7 @@ skipBtn.addEventListener('click', ()=>{
 
 revealBtn.addEventListener('click', ()=>{
   if(!currentChar) return;
-  feedbackEl.textContent = 'Cevap: '+ getRomajiList(currentChar)[0];
+  feedbackEl.textContent = t('answer_reveal',{answer:getRomajiList(currentChar)[0]});
   feedbackEl.className='feedback';
 });
 
