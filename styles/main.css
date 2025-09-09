@@ -180,6 +180,27 @@ footer{padding:40px 0;margin-top:60px;text-align:center;color:var(--text-dim);fo
 .badge{display:inline-block;background:var(--accent-grad);padding:4px 10px;border-radius:40px;font-size:.7rem;font-weight:600;letter-spacing:.5px;margin-left:8px}
 .feedback.ok{color:var(--ok)}
 .feedback.err{color:var(--danger)}
+/* Word game */
+.word-wrap{display:flex;flex-direction:column;gap:18px;max-width:540px}
+.word-target{font-size:4.2rem;font-weight:700;letter-spacing:2px;text-align:center;background:var(--bg-alt);padding:22px 10px;border-radius:20px;border:var(--border);box-shadow:0 8px 24px -8px rgba(0,0,0,.55)}
+.word-input-row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.word-input-row input{flex:1 1 220px;padding:18px 20px;font-size:1.4rem;background:var(--bg-alt);border:var(--border);border-radius:16px;font-family:inherit;letter-spacing:.5px;color:var(--text);box-shadow:0 4px 18px -6px rgba(0,0,0,.55) inset;transition:.3s}
+.word-input-row input:focus{outline:2px solid #6d5dfc66;background:#161d27}
+.word-input-row button{padding:14px 22px;font-size:.9rem}
+.word-score{font-size:.85rem;color:var(--text-dim);margin-top:-6px}
+.word-wrap .feedback{min-height:34px}
+/* Word game contrast & mobile refinements */
+.word-input-row input{background:#1c2532;box-shadow:none;border:1px solid #2f3a4a}
+.word-input-row input:focus{background:#223041;border-color:#566480;outline:2px solid #6d5dfc66}
+.word-input-row input::placeholder{color:var(--text-dim);opacity:.8}
+:root.light .word-input-row input{background:#ffffff; border:1px solid rgba(0,0,0,.12); color:var(--text);}
+:root.light .word-input-row input:focus{background:#ffffff;border-color:#d1499b66;outline:2px solid #d1499b55}
+@media (max-width:560px){
+  .word-input-row{flex-direction:column;align-items:stretch}
+  .word-input-row input{flex:1 1 auto;width:100%}
+  .word-input-row button{width:100%}
+  .word-target{font-size:3.2rem;padding:18px 8px}
+}
 /* Group selection */
 .group-select{margin:4px 0 10px;font-size:.8rem}
 .group-select summary{cursor:pointer;list-style:none;font-weight:600;margin-bottom:6px}
