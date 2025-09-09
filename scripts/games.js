@@ -569,38 +569,86 @@ function startFlash(){
 }
 
 // ---- WORD GAME (Word building / recognition) ----
-// Basit kelime sözlüğü: ['hiragana','romaji','tr','en']
-const WORD_LIST = [
-  ['あい','ai','sevgi','love'],
-  ['いえ','ie','ev','house'],
-  ['うえ','ue','üst','above'],
-  ['あさ','asa','sabah','morning'],
-  ['あめ','ame','yağmur','rain'],
-  ['いく','iku','gitmek','go'],
-  ['あお','ao','mavi','blue'],
-  ['いし','ishi','taş','stone'],
-  ['うみ','umi','deniz','sea'],
-  ['えき','eki','istasyon','station'],
-  ['あか','aka','kırmızı','red'],
-  ['あし','ashi','ayak','foot'],
-  ['さけ','sake','pirinç şarabı','rice wine'],
-  ['すし','sushi','suşi','sushi'],
-  ['こころ','kokoro','kalp','heart'],
-  ['みみ','mimi','kulak','ear'],
-  ['やま','yama','dağ','mountain'],
-  ['かわ','kawa','nehir','river'],
-  ['はな','hana','çiçek','flower'],
-  ['そら','sora','gökyüzü','sky'],
-];
+// Kelime paketleri: packId -> kelimeler (['kana','romaji','tr','en'])
+const WORD_PACKS = {
+  food: [
+    ['すし','sushi','suşi','sushi'],
+    ['さけ','sake','pirinç şarabı','rice wine'],
+    ['おちゃ','ocha','çay','tea'],
+    ['たまご','tamago','yumurta','egg'],
+  ],
+  transport: [
+    ['ひこうき','hikouki','uçak','airplane'],
+    ['でんしゃ','densha','tren','train'],
+    ['みち','michi','yol','road'],
+    ['えき','eki','istasyon','station'],
+  ],
+  greetings: [
+    ['あさ','asa','sabah','morning'],
+    ['きょう','kyou','bugün','today'],
+    ['あした','ashita','yarın','tomorrow'],
+    ['きのう','kinou','dün','yesterday'],
+    ['ことば','kotoba','kelime','word'],
+  ],
+  core: [ // temel doğa & aile
+    ['あめ','ame','yağmur','rain'],
+    ['ゆき','yuki','kar','snow'],
+    ['あい','ai','sevgi','love'],
+    ['あお','ao','mavi','blue'],
+    ['そら','sora','gökyüzü','sky'],
+    ['はな','hana','çiçek','flower'],
+    ['やま','yama','dağ','mountain'],
+    ['かわ','kawa','nehir','river'],
+    ['みみ','mimi','kulak','ear'],
+    ['てら','tera','tapınak','temple'],
+    ['みず','mizu','su','water'],
+    ['きた','kita','kuzey','north'],
+    ['かぜ','kaze','rüzgar','wind'],
+    ['ひる','hiru','öğle','noon'],
+    ['よる','yoru','gece','night'],
+    ['うみ','umi','deniz','sea'],
+    ['いし','ishi','taş','stone'],
+    ['いえ','ie','ev','house'],
+    ['おかね','okane','para','money'],
+    ['ともだち','tomodachi','arkadaş','friend'],
+    ['じかん','jikan','zaman','time'],
+    ['かぞく','kazoku','aile','family'],
+    ['えんぴつ','enpitsu','kurşun kalem','pencil'],
+    ['がっこう','gakkou','okul','school'],
+    ['せんせい','sensei','öğretmen','teacher'],
+    ['こころ','kokoro','kalp','heart'],
+  ],
+};
 
 function startWord(){
   gameArea.classList.remove('hidden');
   gameArea.innerHTML = `<h3>${t('word_title')}</h3>
-    <div class="word-wrap">
-      <div id="wordTarget" class="word-target">あい</div>
-      <div class="word-input-row"><input id="wordInput" autocomplete="off" placeholder="romaji" /> <button id="wordCheck" class="primary">${t('word_check')}</button> <button id="wordNext" class="ghost">${t('word_next')}</button></div>
-      <div id="wordFeedback" class="feedback"></div>
-      <div id="wordScore" class="word-score"></div>
+    <div class="word-game">
+      <div class="word-wrap word-left">
+        <div id="wordTarget" class="word-target">あい</div>
+        <div class="word-config-row">
+          <label class="word-len-label">${t('word_length_label')}
+            <select id="wordLen" class="word-len-select">
+              <option value="0">${t('word_length_any')}</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+            </select>
+          </label>
+        </div>
+        <div class="word-input-row"><input id="wordInput" autocomplete="off" placeholder="romaji" /> <button id="wordCheck" class="primary">${t('word_check')}</button> <button id="wordNext" class="ghost">${t('word_next')}</button></div>
+        <div id="wordFeedback" class="feedback"></div>
+        <div id="wordScore" class="word-score"></div>
+      </div>
+      <aside class="word-pack-panel" aria-label="${t('word_packs_label')}">
+        <h4 class="pack-head"><span class="emoji" aria-hidden="true">📦</span> ${t('word_packs_label')}</h4>
+        <ul class="word-pack-list">
+          <li class="word-pack-item"><label><input type="checkbox" class="wpck" value="food" checked> <span class="wpck-emoji" aria-hidden="true">🍙</span><span>${t('word_pack_food')}</span></label></li>
+          <li class="word-pack-item"><label><input type="checkbox" class="wpck" value="transport" checked> <span class="wpck-emoji" aria-hidden="true">🚗</span><span>${t('word_pack_transport')}</span></label></li>
+          <li class="word-pack-item"><label><input type="checkbox" class="wpck" value="greetings" checked> <span class="wpck-emoji" aria-hidden="true">👋</span><span>${t('word_pack_greetings')}</span></label></li>
+          <li class="word-pack-item"><label><input type="checkbox" class="wpck" value="core" checked> <span class="wpck-emoji" aria-hidden="true">⭐</span><span>Core</span></label></li>
+        </ul>
+      </aside>
     </div>`;
   const targetEl = document.getElementById('wordTarget');
   const inputEl = document.getElementById('wordInput');
@@ -608,13 +656,25 @@ function startWord(){
   const nextBtn = document.getElementById('wordNext');
   const feedback = document.getElementById('wordFeedback');
   const scoreEl = document.getElementById('wordScore');
+  const lenSel = document.getElementById('wordLen');
+  const packChecks = Array.from(document.querySelectorAll('.wpck'));
   let current=null, asked=0, correct=0;
 
   function enabledSet(){ return new Set(getEnabledCharsFromGroups()); }
   function filteredWords(){
     const set = enabledSet();
-    // kelimenin tüm karakterleri seçili gruplarda olmalı
-    return WORD_LIST.filter(w=> w[0].split('').every(ch=> set.has(ch)) );
+    const desired = parseInt(lenSel.value)||0; // 0 = hepsi
+    const activePacks = packChecks.filter(c=>c.checked).map(c=>c.value);
+    let merged=[];
+    activePacks.forEach(pid=>{ if(WORD_PACKS[pid]) merged = merged.concat(WORD_PACKS[pid]); });
+    if(!merged.length){ feedback.textContent=t('word_pack_none_selected'); feedback.className='feedback'; return []; }
+    let list = merged.filter(w=> w[0].split('').every(ch=> set.has(ch)) );
+    if(desired>0){
+      const lenFiltered = list.filter(w=> w[0].length===desired);
+      if(lenFiltered.length){ list = lenFiltered; }
+      else { feedback.textContent = t('word_no_words_len'); feedback.className='feedback'; }
+    }
+    return list;
   }
   let pool = filteredWords();
   if(!pool.length){
@@ -631,15 +691,18 @@ function startWord(){
   }
   function updateScore(){ scoreEl.textContent = t('word_score_line',{correct, total:asked}); }
   function meaningFor(item){ return getLang()==='tr'? item[2] : item[3]; }
+  // Ses özelliği kaldırıldı (TTS / dış dosya) — istek üzerine
   function check(){
     if(!current) return;
     const val = inputEl.value.trim().toLowerCase();
-    asked++; if(val === current[1]){ correct++; feedback.textContent = t('word_correct',{meaning:meaningFor(current)}); feedback.className='feedback ok'; markAttempt(progressCache, current[0][0], true); }
+  asked++; if(val === current[1]){ correct++; feedback.textContent = t('word_correct',{meaning:meaningFor(current)}); feedback.className='feedback ok'; markAttempt(progressCache, current[0][0], true); }
     else { feedback.textContent = t('word_wrong',{answer:current[1]}); feedback.className='feedback err'; markAttempt(progressCache, current[0][0], false); }
     updateScore();
   }
   checkBtn.addEventListener('click', ()=>{ check(); });
   nextBtn.addEventListener('click', ()=>{ pick(); });
+  lenSel.addEventListener('change', ()=>{ pool = filteredWords(); pick(); });
+  packChecks.forEach(ch=> ch.addEventListener('change', ()=>{ pool = filteredWords(); pick(); }));
   inputEl.addEventListener('keydown', e=>{ if(e.key==='Enter'){ check(); } });
   pick(); updateScore();
   registerCleanup(()=>{});
