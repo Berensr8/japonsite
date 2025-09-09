@@ -8,47 +8,47 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <!-- Analytics çerez izni verilince yüklenecek (bkz. privacy.js) -->
+  <!-- Analytics only loads after consent (see privacy.js) -->
 </head>
 <body>
   <header class="site-header glass">
     <div class="logo">Hiragana<span>Lab</span></div>
     <nav>
-      <a href="#quiz">Quiz</a>
-      <a href="#oyunlar">Oyunlar</a>
-      <a href="#tablo">Tüm Tablo</a>
+      <a href="#quiz" data-i18n="nav_quiz">Quiz</a>
+      <a href="#oyunlar" data-i18n="nav_games">Oyunlar</a>
+      <a href="#tablo" data-i18n="nav_table">Tüm Tablo</a>
+      <button id="langToggle" class="ghost" style="margin-left:14px">EN</button>
     </nav>
   </header>
   <div class="decor-strip" aria-hidden="true"></div>
   <main>
     <section class="hero" id="ana">
-      <h1>Hiragana'yı Etkileşimli Öğren</h1>
-      <p>Spaced repetition ve mini oyunlarla temel 46 Hiragana karakterini kalıcı öğren.</p>
+      <h1 data-i18n="hero_title">Hiragana'yı Etkileşimli Öğren</h1>
+      <p data-i18n="hero_sub">Spaced repetition ve mini oyunlarla temel 46 Hiragana karakterini kalıcı öğren.</p>
       <div class="actions">
-        <button id="startQuiz" class="primary">Quiz'e Başla</button>
-        <button id="showChart" class="secondary">Tüm Tablo</button>
-  <button id="learningModeBtn" class="ghost">Sıralı Öğren</button>
+        <button id="startQuiz" class="primary" data-i18n="start_quiz">Quiz'e Başla</button>
+        <button id="showChart" class="secondary" data-i18n="show_chart">Tüm Tablo</button>
+        <button id="learningModeBtn" class="ghost" data-i18n="learning_mode">Sıralı Öğren</button>
       </div>
     </section>
 
     <section id="quiz" class="panel hidden">
-  <h2 class="jp-head jp-quiz">Hiragana Quiz</h2>
+      <h2 class="jp-head jp-quiz" data-i18n="quiz_heading">Hiragana Quiz</h2>
       <div class="mode-tabs">
-        <button class="tab active" data-mode="standard">Karışık</button>
-        <button class="tab" data-mode="learning">Sıralı Öğrenme</button>
-        <button class="tab" data-mode="mastered">Tamamlananlar</button>
-        <button class="tab" data-mode="test">Test (4 Şık)</button>
+        <button class="tab active" data-mode="standard" data-i18n="mode_standard">Karışık</button>
+        <button class="tab" data-mode="learning" data-i18n="mode_learning">Sıralı Öğrenme</button>
+        <button class="tab" data-mode="mastered" data-i18n="mode_mastered">Tamamlananlar</button>
+        <button class="tab" data-mode="test" data-i18n="mode_test">Test (4 Şık)</button>
       </div>
-  <!-- Grup seçici global panele taşındı -->
       <div class="quiz-card glass" id="quizCard">
         <div class="char" id="currentChar">あ</div>
         <div id="testStatus" class="test-status hidden"></div>
-        <input id="answerInput" placeholder="Okunuş (romaji)" autocomplete="off" />
+        <input id="answerInput" placeholder="Okunuş (romaji)" autocomplete="off" data-i18n="input_placeholder" />
         <div class="feedback" id="feedback"></div>
         <div class="controls">
-          <button id="skipBtn" class="ghost">Atla</button>
-          <button id="revealBtn" class="ghost">Göster</button>
-          <button id="submitBtn" class="primary">Gönder</button>
+          <button id="skipBtn" class="ghost" data-i18n="skip">Atla</button>
+          <button id="revealBtn" class="ghost" data-i18n="reveal">Göster</button>
+          <button id="submitBtn" class="primary" data-i18n="submit">Gönder</button>
         </div>
         <div id="choiceArea" class="choice-area hidden"></div>
       </div>
@@ -56,92 +56,90 @@
         <div class="progress-bar" id="progressBar"></div>
       </div>
       <div class="session-stats" id="sessionStats"></div>
-  <div class="learning-stats" id="learningStats"></div>
+      <div class="learning-stats" id="learningStats"></div>
     </section>
 
     <section id="oyunlar" class="panel">
-  <h2 class="jp-head jp-games">Mini Oyunlar</h2>
-  <!-- Oyun grup seçici global panele taşındı -->
+      <h2 class="jp-head jp-games" data-i18n="games_heading">Mini Oyunlar</h2>
       <div class="games-grid">
         <div class="game-tile" data-game="memory">
           <div class="game-icon" aria-hidden="true">🧠</div>
           <div class="game-body">
-            <h3>Hafıza Eşleştirme</h3>
-            <p>Karakteri doğru romaji ile eşleştir, süre dolmadan tüm çiftleri aç.</p>
+            <h3 data-i18n="memory_title">Hafıza Eşleştirme</h3>
+            <p data-i18n-desc="memory_desc">Karakteri doğru romaji ile eşleştir, süre dolmadan tüm çiftleri aç.</p>
           </div>
-          <div class="game-meta"><span class="last-score">Son skor yok</span></div>
-          <button class="full">Başlat</button>
+          <div class="game-meta"><span class="last-score" data-i18n="last_score_none">Son skor yok</span></div>
+          <button class="full" data-i18n="start">Başlat</button>
         </div>
         <div class="game-tile" data-game="typing">
           <div class="game-icon" aria-hidden="true">⌨️</div>
           <div class="game-body">
-            <h3>Hızlı Yaz</h3>
-            <p>Beliren karakterleri mümkün olduğunca hızlı ve doğru yaz.</p>
+            <h3 data-i18n="typing_title">Hızlı Yaz</h3>
+            <p data-i18n-desc="typing_desc">Beliren karakterleri mümkün olduğunca hızlı ve doğru yaz.</p>
           </div>
-          <div class="game-meta"><span class="last-score">Son skor yok</span></div>
-          <button class="full">Başlat</button>
+          <div class="game-meta"><span class="last-score" data-i18n="last_score_none">Son skor yok</span></div>
+            <button class="full" data-i18n="start">Başlat</button>
         </div>
         <div class="game-tile" data-game="flash">
           <div class="game-icon" aria-hidden="true">🃏</div>
           <div class="game-body">
-            <h3>Flash Kart</h3>
-            <p>Çevir, tahmin et ve ezberini pekiştir.</p>
+            <h3 data-i18n="flash_title">Flash Kart</h3>
+            <p data-i18n-desc="flash_desc">Çevir, tahmin et ve ezberini pekiştir.</p>
           </div>
-          <div class="game-meta"><span class="last-score">Son skor yok</span></div>
-          <button class="full">Başlat</button>
+          <div class="game-meta"><span class="last-score" data-i18n="last_score_none">Son skor yok</span></div>
+            <button class="full" data-i18n="start">Başlat</button>
         </div>
-  <div class="game-tile featured" data-game="draw">
+        <div class="game-tile featured" data-game="draw">
           <div class="game-icon" aria-hidden="true">✏️</div>
           <div class="game-body">
-            <h3>Çizim</h3>
-            <p>Romajisi verilen karakteri çiz ve otomatik skorla değerlendir.</p>
+            <h3 data-i18n="draw_title">Çizim</h3>
+            <p data-i18n-desc="draw_desc">Romajisi verilen karakteri çiz ve otomatik skorla değerlendir.</p>
           </div>
-            <div class="game-meta"><span class="last-score">Son skor yok</span></div>
-          <button class="full">Başlat</button>
+          <div class="game-meta"><span class="last-score" data-i18n="last_score_none">Son skor yok</span></div>
+            <button class="full" data-i18n="start">Başlat</button>
         </div>
       </div>
       <div id="gameArea" class="game-area hidden"></div>
-  <div id="scoreHistory" class="score-history"></div>
+      <div id="scoreHistory" class="score-history"></div>
     </section>
 
     <section id="tablo" class="panel">
-  <h2 class="jp-head jp-table">Hiragana Tablosu</h2>
+      <h2 class="jp-head jp-table" data-i18n="nav_table">Hiragana Tablosu</h2>
       <div id="hiraganaTable" class="hiragana-table"></div>
     </section>
   </main>
   <footer>
-    <p>HiraganaLab © 2025 · <a href="#" class="foot-link" rel="noopener">Gizlilik</a> · <a href="#" id="manageConsent" class="foot-link">Çerez Tercihi</a></p>
+    <p>HiraganaLab © 2025 · <a href="#" class="foot-link" rel="noopener" data-i18n="privacy">Gizlilik</a> · <a href="#" id="manageConsent" class="foot-link" data-i18n="manage_consent">Çerez Tercihi</a></p>
   </footer>
   <aside id="groupPanel" class="group-panel glass">
-    <h4>Harf Grupları</h4>
+    <h4 data-i18n="groups_title">Harf Grupları</h4>
     <div id="groupCheckboxesGlobal" class="groups compact"></div>
-    <div class="panel-hint">Seçtiklerin tüm quiz ve oyunlara uygulanır.</div>
+    <div class="panel-hint" data-i18n="groups_hint">Seçtiklerin tüm quiz ve oyunlara uygulanır.</div>
   </aside>
-  <button id="groupFab" class="group-fab primary" aria-label="Harf Gruplarını Aç" aria-controls="groupPanel">Gruplar</button>
+  <button id="groupFab" class="group-fab primary" aria-label="Harf Gruplarını Aç" aria-controls="groupPanel" data-i18n="groups_fab">Gruplar</button>
   <div id="panelBackdrop" class="panel-backdrop" aria-hidden="true"></div>
   <script type="module" src="scripts/quiz.js"></script>
   <script type="module" src="scripts/games.js"></script>
   <script type="module" src="scripts/theme.js"></script>
   <script type="module" src="scripts/mobile.js"></script>
-  <!-- Yeni Minimal Çerez Onayı -->
   <div id="consentBar" class="consent-bar" role="dialog" aria-live="polite" aria-label="Çerez Kullanımı" hidden>
     <div class="consent-main">
       <span class="consent-text">Deneyimi ölçmek için anonim Analytics (GA4) kullanıyoruz. Kabul eder misiniz?</span>
       <div class="consent-actions">
-        <button id="consentAccept" class="primary" data-act="accept">Kabul</button>
-        <button id="consentReject" class="ghost" data-act="reject">Reddet</button>
-        <button id="consentDetailsToggle" class="secondary" aria-expanded="false" aria-controls="consentDetails">Detaylar</button>
+        <button id="consentAccept" class="primary" data-act="accept" data-i18n="consent_accept">Kabul</button>
+        <button id="consentReject" class="ghost" data-act="reject" data-i18n="consent_reject">Reddet</button>
+        <button id="consentDetailsToggle" class="secondary" aria-expanded="false" aria-controls="consentDetails" data-i18n="consent_details">Detaylar</button>
       </div>
     </div>
     <div id="consentDetails" class="consent-details" hidden>
       <p>Yalnızca anonim istatistik: sayfa görüntüleme, olay (oyun açma vb), tarayıcı türü, yaklaşık cihaz boyutu. IP adresi Google tarafından anonimleştirilir. Kişisel veri veya reklam çerezi yoktur.</p>
       <div class="consent-small-actions">
-        <button id="consentReset" class="ghost small">Tercihi Sıfırla</button>
-        <button id="consentCloseDetails" class="ghost small">Kapat</button>
+        <button id="consentReset" class="ghost small" data-i18n="consent_reset">Tercihi Sıfırla</button>
+        <button id="consentCloseDetails" class="ghost small" data-i18n="consent_close">Kapat</button>
       </div>
     </div>
   </div>
+  <script type="module" src="scripts/i18n.js"></script>
   <script type="module" src="scripts/privacy.js"></script>
-  <!-- stats.js kaldırıldı -->
 </body>
 </html>
